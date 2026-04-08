@@ -1,10 +1,10 @@
 'use client';
 
+import { Suspense, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, SlidersHorizontal, X } from 'lucide-react';
+import { Search, SlidersHorizontal } from 'lucide-react';
 import { api } from '@/lib/api';
 import { AnimeCard, AnimeCardSkeleton } from '@/components/anime/AnimeCard';
 
@@ -26,6 +26,14 @@ const SORTS: { value: string; label: string }[] = [
 ];
 
 export default function SearchPage() {
+  return (
+    <Suspense fallback={<div className="p-10 text-center text-white">Loading...</div>}>
+      <SearchContent />
+    </Suspense>
+  );
+}
+
+function SearchContent() {
 
 const searchParams = useSearchParams();
 const router = useRouter();
@@ -70,8 +78,6 @@ router.push(`/search?${p.toString()}`);
 
 };
 
-const activeFilters = [genre, type, status, year].filter(Boolean).length;
-
 return (
 
 <div className="max-w-7xl mx-auto px-4 lg:px-6 py-8">
@@ -107,55 +113,6 @@ Filters
 </button>
 
 </div>
-
-{showFilters && (
-
-<motion.div
-initial={{ opacity:0, y:-10 }}
-animate={{ opacity:1, y:0 }}
-className="p-5 rounded-2xl bg-[#131320] border border-[rgba(124,58,237,0.15)] mb-6 grid grid-cols-2 md:grid-cols-4 gap-4"
->
-
-<FilterSelect
-label="Genre"
-value={genre}
-options={GENRES.map((g:string)=>({
-value:g,
-label:g.charAt(0).toUpperCase()+g.slice(1)
-}))}
-onChange={(v:string)=>updateFilter('genre',v)}
-/>
-
-<FilterSelect
-label="Type"
-value={type}
-options={TYPES.map((t:string)=>({
-value:t,
-label:t
-}))}
-onChange={(v:string)=>updateFilter('type',v)}
-/>
-
-<FilterSelect
-label="Status"
-value={status}
-options={STATUSES.map((s:string)=>({
-value:s,
-label:s.replace(/_/g,' ')
-}))}
-onChange={(v:string)=>updateFilter('status',v)}
-/>
-
-<FilterSelect
-label="Sort"
-value={sort}
-options={SORTS}
-onChange={(v:string)=>updateFilter('sort',v)}
-/>
-
-</motion.div>
-
-)}
 
 {isLoading ? (
 
@@ -195,49 +152,5 @@ transition={{delay:i*0.03}}
 </div>
 
 );
-
-}
-
-function FilterSelect({
-label,
-value,
-options,
-onChange
-}:{
-label:string
-value:string
-options:{value:string,label:string}[]
-onChange:(v:string)=>void
-}){
-
-return(
-
-<div>
-
-<label className="block text-xs text-[#8888aa] mb-1.5 uppercase">
-
-{label}
-
-</label>
-
-<select
-value={value}
-onChange={(e)=>onChange(e.target.value)}
-className="w-full bg-[#0a0a0f] border border-[rgba(124,58,237,0.2)] rounded-lg px-3 py-2 text-sm text-[#f1f1f8]"
->
-
-<option value="">All</option>
-
-{options.map((o)=>(
-<option key={o.value} value={o.value}>
-{o.label}
-</option>
-))}
-
-</select>
-
-</div>
-
-)
 
 }
