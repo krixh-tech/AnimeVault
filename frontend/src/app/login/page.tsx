@@ -70,10 +70,13 @@ export default function LoginPage() {
         <form onSubmit={handle} className="space-y-4">
           {!isLogin && (
             <Field icon={User} type="text" placeholder="Username" value={form.username}
-              onChange={e => setForm(f => ({ ...f, username: e.target.value }))} />
-          )}
+             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+  setForm(f => ({ ...f, username: e.target.value }))
+}
           <Field icon={Mail} type="email" placeholder="Email address" value={form.email}
-            onChange={e => setForm(f => ({ ...f, email: e.target.value }))} />
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+  setForm(f => ({ ...f, email: e.target.value }))
+            } />
           <div className="relative">
             <Field icon={Lock} type={show ? 'text' : 'password'} placeholder="Password" value={form.password}
               onChange={e => setForm(f => ({ ...f, password: e.target.value }))} />
